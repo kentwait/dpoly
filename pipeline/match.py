@@ -1,4 +1,5 @@
 from Bio import SeqIO
+import subprocess as proc
 
 def match_by_fbtr(fbtr_list1, fbtr_list2):
     """Match FlyBase transcript ID's between 2 lists.
@@ -36,3 +37,35 @@ def reciprocal_match_by_fbtr(fbtr_list1, fbtr_list2):
     forward_match = set(match_by_fbtr(fbtr_list1, fbtr_list2))
     reverse_match = set(match_by_fbtr(fbtr_list2, fbtr_list1))
     return forward_match.intersection(reverse_match)
+
+def call_blast(task, query_path, db_path, out_path,
+               outfmt='6 std qlen slen qcovs sstrand',
+               max_seq=1,
+               threads=6):
+    """
+
+    Parameters
+    ----------
+    task : str
+    query_path : str
+    db_path : str
+    out_path : str
+    outfmt : str
+    max_seq : int
+    threads : int
+
+    Returns
+    -------
+    int
+    """
+    blast_cmd = 'blastn -task {task} -query {query} ' \
+                '-db {db} -out {out} -outfmt {outfmt} ' \
+                '-max_target_seqs {max_seq} -num_threads {threads}'
+    cmd = blast_cmd.format(task=task,
+                           query=query_path,
+                           db=db_path,
+                           out=out_path,
+                           outfmt='"'+outfmt+'"',
+                           max_seq=max_seq,
+                           threads=threads)
+    return proc.run(cmd, shell=True, stdout=proc.PIPE)
