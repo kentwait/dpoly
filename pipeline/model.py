@@ -134,7 +134,7 @@ class Alignment(object):
 class NuclAlignment(Alignment):
     def __init__(self, name, description=None):
         super().__init__(name, description=description, aln_type='nucleotide')
-        
+
 
 class ProtAlignment(Alignment):
     def __init__(self, name, description=None):
@@ -144,6 +144,22 @@ class ProtAlignment(Alignment):
 class CodonAlignment(Alignment):
     def __init__(self, name, description=None):
         super().__init__(name, description=description, aln_type='codon')
+
+    def __len__(self):
+        return len(self.aln_matrix.shape[-1]) / 3
+
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            x = i/3
+            return self.aln_matrix[:, x:x+3]
+        elif isinstance(i, str):
+            if i in self._records_lookup_d.keys():
+                pos = self._records_lookup_d[i]
+                return self.aln_matrix[pos]
+        return None
+
+    def __iter__(self):
+        return iter(self.aln_matrix.transpose())
 
 
 class Filter(object):
