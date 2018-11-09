@@ -63,14 +63,15 @@ class Sequence(object):
         str
 
         """
-        string = '>{id} {description}\n'.format(
-            id=self.name,
-            description=self.description,
-        )
+        string = '>' + self.name
+        if self.description:
+            string += ' ' + self.description
+        string += '\n'
+
         if line_width:
             last = 0
-            for i in range(0, len(self), line_width):
-                string += self._sequence[i:i+line_width]
+            for i in range(line_width, len(self), line_width):
+                string += self._sequence[i-line_width:i] + '\n'
                 last = i
             string += self._sequence[last:]
             return string
