@@ -48,7 +48,7 @@ class Sequence(object):
         """Returns a read-only string representation of the
         sequence.
         """
-        return self.sequence
+        return self._sequence
 
     def fasta_format(self, line_width=None):
         """Output the sequence as a FASTA-formatted string.
