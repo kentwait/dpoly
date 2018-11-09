@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 
 def create_blastdb(fasta_path, title, out_path,
-                   dbtype='nucl'):
-    """
+                   dbtype='nucl', executable_path='makeblastdb'):
+    """Creates a blast database by calling the makeblastdb executable.
 
     Parameters
     ----------
@@ -17,10 +17,11 @@ def create_blastdb(fasta_path, title, out_path,
     -------
     subprocess.CompletedProcess
     """
-    blast_cmd = 'makeblastdb -in {fasta_path} ' \
+    blast_cmd = '{exec_path} -in {fasta_path} ' \
                 '-input_type fasta -dbtype {dbtype} -title {title} ' \
                 '-out {out_path}'
-    cmd = blast_cmd.format(fasta_path=fasta_path,
+    cmd = blast_cmd.format(exec_path=executable_path,
+                           fasta_path=fasta_path,
                            dbtype=dbtype,
                            title=title,
                            out_path=out_path)
@@ -28,9 +29,8 @@ def create_blastdb(fasta_path, title, out_path,
 
 def call_blast(task, query_path, db_path, out_path,
                outfmt='6 std qlen slen qcovs sstrand',
-               max_seq=1,
-               threads=6):
-    """
+               max_seq=1, threads=6, executable_path='blastn'):
+    """Runs a blastn search.
 
     Parameters
     ----------
@@ -46,10 +46,11 @@ def call_blast(task, query_path, db_path, out_path,
     -------
     subprocess.CompletedProcess
     """
-    blast_cmd = 'blastn -task {task} -query {query} ' \
+    blast_cmd = '{exec_path} -task {task} -query {query} ' \
                 '-db {db} -out {out} -outfmt {outfmt} ' \
                 '-max_target_seqs {max_seq} -num_threads {threads}'
-    cmd = blast_cmd.format(task=task,
+    cmd = blast_cmd.format(exec_path=executable_path,
+                           task=task,
                            query=query_path,
                            db=db_path,
                            out=out_path,
@@ -59,9 +60,7 @@ def call_blast(task, query_path, db_path, out_path,
     return proc.run(cmd, shell=True, stdout=proc.PIPE)
 
 def blast_to_df(path,
-                filter_by_eval=True,
-                eval_threshold=1e-10,
-                sep='\t',
+                filter_by_eval=True, eval_threshold=1e-10, sep='\t',
                 col_labels=('qaccver', 'saccver', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen', 'qcovs', 'sstrand')):
     """Converts a tab-delimited blastn result to a pandas DataFrame.
 
@@ -108,8 +107,7 @@ def summarize(group):
     })
 
 def group_blastdf(df,
-                  summarize=True,
-                  groupby=('qaccver', 'saccver'),
+                  summarize=True, groupby=('qaccver', 'saccver'),
                   summary_col_labels=('qaccver', 'saccver', 'pident',
                                       'length', 'mismatch', 'gapopen',
                                       'bitscore', 'qlen', 'slen')):
