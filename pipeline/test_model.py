@@ -1,4 +1,6 @@
-from pipeline.model import Sequence, CodonSequence
+from pipeline.model import Sequence, NuclSequence, CodonSequence
+from pipeline.model import Alignment
+
 
 class TestSequence:
     def setup(self):
@@ -23,6 +25,10 @@ class TestSequence:
         fasta_string = self.seq.fasta_format(line_width=20)
         assert fasta_string == '>test\nATGCATGCATGCAAA'
 
+        self.seq.description = 'test description'
+        fasta_string = self.seq.fasta_format()
+        assert fasta_string == '>test test description\nATGCATGCATGCAAA'
+
     def test_len(self):
         assert len(self.seq) == 15
 
@@ -45,6 +51,7 @@ class TestSequence:
 
     def test_str(self):
         assert str(self.seq) == 'ATGCATGCATGCAAA'
+
 
 class TestCodonSequence:
     def setup(self):
@@ -73,3 +80,21 @@ class TestCodonSequence:
 
     def test_str(self):
         assert str(self.seq) == 'ATG CAT GCA TGC AAA', print(str(self.seq))
+
+
+class TestAlignmentEmpty:
+    def setup(self):
+        self.aln = Alignment('test')
+
+    def test_add_sequence_obj(self):
+        seq_obj = NuclSequence('test', 'ATGCATGCATGCAAA')
+        self.aln.add_sequence_obj(seq_obj)
+        assert len(self.aln._records) == 1
+        assert len(self.aln._records_lookup_d) == 1
+        assert len(self.aln._aln_matrix) == 1
+
+    def test_add_sequence(self):
+        self.aln.add_sequence('test', 'ATGCATGCATGCAAA', 'nucleotide')
+        assert len(self.aln._records) == 1
+        assert len(self.aln._records_lookup_d) == 1
+        assert len(self.aln._aln_matrix) == 1
