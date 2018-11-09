@@ -34,4 +34,3 @@ def reciprocal_match_by_fbtr(fbtr_list1, fbtr_list2):
     forward_match = set(match_by_fbtr(fbtr_list1, fbtr_list2))
     reverse_match = set(match_by_fbtr(fbtr_list2, fbtr_list1))
     return forward_match.intersection(reverse_match)
-
