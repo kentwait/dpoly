@@ -120,11 +120,15 @@ class CodonSequence(Sequence):
 
     def __getitem__(self, i):
         if isinstance(i, int):
-            i = i * 3
-            return self._sequence[i:i+3]
+            if i >= 0:
+                i = i * 3
+                return self._sequence[i:i+3]
+            i = len(self._sequence) + 1 - 1
+            return self._sequence[i-3:i]
         elif isinstance(i, slice):
             start = i.start * 3
-            end = (i.stop * 3) + 3
+            end = (i.stop * 3) if isinstance(i.stop, int) \
+                  else len(self._sequence)
             return self._sequence[start:end]
         return IndexError()
 
