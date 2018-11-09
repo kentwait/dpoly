@@ -61,7 +61,10 @@ def call_blast(task, query_path, db_path, out_path,
 
 def blast_to_df(path,
                 filter_by_eval=True, eval_threshold=1e-10, sep='\t',
-                col_labels=('qaccver', 'saccver', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen', 'qcovs', 'sstrand')):
+                col_labels=('qaccver', 'saccver', 'pident', 'length',
+                            'mismatch', 'gapopen', 'qstart', 'qend',
+                            'sstart', 'send', 'evalue', 'bitscore',
+                            'qlen', 'slen', 'qcovs', 'sstrand')):
     """Converts a tab-delimited blastn result to a pandas DataFrame.
 
     Parameters
@@ -107,7 +110,7 @@ def summarize(group):
     })
 
 def group_blastdf(df,
-                  summarize=True, groupby=('qaccver', 'saccver'),
+                  summarize_data=True, groupby=('qaccver', 'saccver'),
                   summary_col_labels=('qaccver', 'saccver', 'pident',
                                       'length', 'mismatch', 'gapopen',
                                       'bitscore', 'qlen', 'slen')):
@@ -118,12 +121,12 @@ def group_blastdf(df,
     df : pandas.DataFrame
     groupby : iterable of str
     summary_col_labels : iterable of str
-    
+
     Returns
     -------
     pandas.DataFrame
     """
     grp_df = df.groupby(groupby)[summary_col_labels]
-    if summarize:
+    if summarize_data:
         return grp_df.apply(summarize)[summary_col_labels[2:]]
     return grp_df
