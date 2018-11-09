@@ -311,7 +311,7 @@ class Alignment(object):
                                  exclude_char=exclude_char)
 
     def __len__(self):
-        return len(self._aln_matrix.shape[-1])
+        return self._aln_matrix.shape[-1]
 
     def __getitem__(self, i):
         if isinstance(i, int):
